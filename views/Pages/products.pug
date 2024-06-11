@@ -1,0 +1,7 @@
+extends ../layout/_base
+block content 
+    .container.mx-auto.px-4.py-8
+        .grid.gap-4.grid-cols-1(class='md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4')
+            each product in products
+                .w-full.cursor-pointer.transition-transform.transform(class='hover:scale-105' onclick=`location.href='/products/${product.id}'`)
+                    include ../components/productCard

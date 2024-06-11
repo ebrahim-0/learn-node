@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import path from "path";
 import ProductLayoutRouter from "./routes/ProductLayoutRouter";
 import productsApiRouter from "./routes/ProductsApiRouter";
@@ -12,6 +12,8 @@ import { rateLimit } from "express-rate-limit";
 import compression from "compression";
 
 const app = express();
+
+// use this file for all the next lessons
 
 // ** Middlewares
 

@@ -13,8 +13,6 @@ import compression from "compression";
 
 const app = express();
 
-// use this file for all the next lessons
-
 // ** Middlewares
 
 app.use(morgan("dev"));

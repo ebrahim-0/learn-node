@@ -1,14 +1,14 @@
 import { Router } from "express";
-import path from "path";
 import ProductService from "../services/ProductService";
 import ProductsController from "../controllers/ProductsController";
 
 const productsApiRouter = Router();
 
-const dbPath = path.join(path.dirname(__dirname), "data", "db.json");
+console.log("🚀 productsApiRouter");
 
-const productService = new ProductService(dbPath);
-const productController = new ProductsController(productService);
+const productService = new ProductService();
+
+const productsController = new ProductsController(productService);
 
 const {
   getAllProducts,
@@ -16,7 +16,7 @@ const {
   getSingeProduct,
   updateProduct,
   deleteProduct,
-} = productController;
+} = productsController;
 
 productsApiRouter.route("/").get(getAllProducts).post(createProduct);
 

@@ -2,19 +2,18 @@ import { NextFunction, Request, Response } from "express";
 import ProductService from "../services/ProductService";
 
 export default class ProductsViewController {
-  constructor(private _productService: ProductService) {
+  constructor(private _ProductService: ProductService) {
     this.renderProductsPage = this.renderProductsPage.bind(this);
     this.renderProductPage = this.renderProductPage.bind(this);
   }
 
   async renderProductsPage(req: Request, res: Response, next: NextFunction) {
     try {
-      // throw new Error("Test error");
-      const products = await this._productService.getAllProducts(req, res);
+      const products = await this._ProductService.getAllProducts();
+
       res.render("Pages/products", {
         title: "Products",
-        products,
-        v: "v1",
+        products: products.rows,
         isActiveRoute: res.locals.isActiveRoute,
       });
     } catch (error) {
@@ -30,15 +29,16 @@ export default class ProductsViewController {
         return res.status(404).json({ message: "Invalid ID" });
       }
 
-      const product = await this._productService.getProductById(req, res, id);
+      const product = await this._ProductService.getSingeProductById(id);
+
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
 
       res.render("Pages/product", {
-        title: "Product - " + product.id,
-        product,
-        v: "v1",
+        title: "Product - " + product.rows[0].id,
+        product: product.rows[0],
+
         isActiveRoute: res.locals.isActiveRoute,
       });
     } catch (error) {

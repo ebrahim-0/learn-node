@@ -1,57 +1,46 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import ProductService from "../services/ProductService";
-import { IProduct, IProductBody } from "../types";
 
 export default class ProductsController {
-  constructor(private _productService: ProductService) {
-    this.createProduct = this.createProduct.bind(this);
+  constructor(private _ProductService: ProductService) {
     this.getAllProducts = this.getAllProducts.bind(this);
     this.getSingeProduct = this.getSingeProduct.bind(this);
+
+    this.createProduct = this.createProduct.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
-  }
 
-  async createProduct(req: Request, res: Response, next: NextFunction) {
-    try {
-      const productBody: IProductBody = req.body;
-      if (!productBody.name || !productBody.price || !productBody.description) {
-        return res.status(400).json({ message: "All fields are required" });
-      }
-
-      await this._productService.createProduct(req, res, productBody);
-      return res.status(201).json({ message: "Product created successfully" });
-    } catch (error) {
-      next(error);
-    }
+    console.log("🚀 ProductsController");
   }
 
   async getAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
-      // throw new Error("Something went wrong 🔥");
       const ids = req.query.id as string[];
       const filteredParams = req.query.filter as string;
 
       if (ids?.length || filteredParams) {
         if (filteredParams) {
-          const productToReturn =
-            await this._productService.getProductsByFilter(
-              req,
-              res,
-              filteredParams
-            );
-          return res.status(200).json({ products: productToReturn });
-        }
-        if (ids?.length) {
-          const filteredProducts = await this._productService.getProductByIds(
-            req,
-            res,
-            ids
+          const products = await this._ProductService.getProductsByFilter(
+            filteredParams
           );
-          return res.status(200).json({ products: filteredProducts });
+          res.status(200).json({ products: products.rows });
+        }
+
+        if (ids?.length) {
+          const formattedIds = Array.isArray(ids) ? ids : [ids];
+          console.log("formattedIds", formattedIds);
+          const products = await this._ProductService.getProductsByIds(
+            formattedIds
+          );
+
+          if (!products.rowCount) {
+            return res.status(404).json({ message: "Product not found" });
+          }
+          res.status(200).json({ products: products.rows });
         }
       } else {
-        const data = await this._productService.getAllProducts(req, res);
-        return res.status(200).json({ products: data });
+        const products = await this._ProductService.getAllProducts();
+        res.status(200).json({ products: products.rows });
       }
     } catch (error) {
       next(error);
@@ -64,58 +53,64 @@ export default class ProductsController {
       if (isNaN(id)) {
         return res.status(404).json({ message: "Invalid ID" });
       }
+      const product = await this._ProductService.getSingeProductById(id);
 
-      const product = await this._productService.getProductById(req, res, id);
-      if (!product) {
+      if (!product.rowCount) {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      return res.status(200).json({ product });
+      res.status(200).json(product.rows);
     } catch (error) {
       next(error);
     }
   }
 
+  async createProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const product = req.body;
+      const newProduct = await this._ProductService.createProduct(product);
+      res.status(201).json(newProduct.rows);
+    } catch (error) {
+      next(error);
+    }
+  }
   async updateProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const id = +req.params.id;
+      const product = req.body;
       if (isNaN(id)) {
         return res.status(404).json({ message: "Invalid ID" });
       }
 
-      const data = await this._productService.findAllInDb(req, res);
-      const productIndex = data.products.findIndex(
-        (product: IProduct) => product.id === id
+      const productToUpdate = await this._ProductService.getSingeProductById(
+        id
       );
 
-      if (productIndex === -1) {
+      if (!productToUpdate.rowCount) {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      await this._productService.updateProduct(req, res, productIndex);
-      return res.status(200).json({ message: "Product updated successfully" });
+      const updatedProduct = await this._ProductService.updateProduct(
+        id,
+        product
+      );
+      res.status(200).json(updatedProduct.rows);
     } catch (error) {
       next(error);
     }
   }
-
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const id = +req.params.id;
       if (isNaN(id)) {
         return res.status(404).json({ message: "Invalid ID" });
       }
+      const product = await this._ProductService.deleteProduct(id);
 
-      const data = await this._productService.findAllInDb(req, res);
-      const productIndex = data.products.findIndex(
-        (product: IProduct) => product.id === id
-      );
-
-      if (productIndex === -1) {
+      if (!product.rowCount) {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      await this._productService.deleteProduct(req, res, productIndex);
       return res.status(200).json({ message: "Product deleted successfully" });
     } catch (error) {
       next(error);

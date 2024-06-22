@@ -1,100 +1,57 @@
-import { Request, Response } from "express";
-import readFile from "../utils/readFile";
-import { IProduct, IProductBody, IReturnedProduct } from "../types";
-import writeFile from "../utils/writeFile";
+import pool from "../models/db";
+import { IProduct } from "../types";
 
 export default class ProductService {
-  constructor(private dbPath: string) {}
-
-  async findAllInDb(req: Request, res: Response) {
-    const data = await readFile(this.dbPath, res);
-    return data;
+  constructor() {
+    console.log("🚀 ProductService");
   }
 
-  // ** Create a new product
-
-  async createProduct(req: Request, res: Response, productBody: IProductBody) {
-    const data = await this.findAllInDb(req, res);
-
-    const newProduct: IProduct = {
-      id: data.products.length + 1,
-      qty: 0,
-      ...productBody,
-    };
-
-    data.products.push(newProduct);
-
-    writeFile(this.dbPath, data);
+  async getAllProducts() {
+    return await pool.query(`SELECT * FROM products`);
   }
 
-  // ** Get all products
-
-  async getAllProducts(req: Request, res: Response) {
-    const data = await this.findAllInDb(req, res);
-
-    return data.products;
+  async getProductsByFilter(filteredParams: string) {
+    return await pool.query(`SELECT id, ${filteredParams} FROM products`);
   }
 
-  // ** Get products by IDs
-
-  async getProductByIds(req: Request, res: Response, ids: string[]) {
-    const data = await this.findAllInDb(req, res);
-
-    if (ids?.length) {
-      return data.products.filter((product: IProduct) =>
-        ids.includes(product.id.toString())
-      );
-    }
+  async getProductsByIds(ids: string[]) {
+    return await pool.query("SELECT * FROM products WHERE id = ANY($1)", [ids]);
   }
 
-  // ** Get products by filter
-  async getProductsByFilter(
-    req: Request,
-    res: Response,
-    filteredParams: string
-  ) {
-    const data = await this.findAllInDb(req, res);
-
-    const fieldsToFilter = filteredParams.split(",");
-
-    return data.products.map((product: IProduct) => {
-      let result: IReturnedProduct = { id: product.id };
-      fieldsToFilter.forEach((field) => {
-        if (product.hasOwnProperty(field)) {
-          result[field as keyof IProduct] = product[field as keyof IProduct];
-        }
-      });
-
-      return result;
-    });
+  async getSingeProductById(id: number) {
+    return await pool.query(`SELECT * FROM products WHERE id = ${id}`);
   }
 
-  // ** Get a single product
+  async createProduct(product: IProduct) {
+    const { name, price, description, qty } = product;
 
-  async getProductById(req: Request, res: Response, id: number) {
-    const data = await this.findAllInDb(req, res);
+    await pool.query(
+      "SELECT setval('products_id_seq', (SELECT MAX(id) FROM products))"
+    );
 
-    return data.products.find((product: IProduct) => product.id === id);
+    return await pool.query(
+      `INSERT INTO products (name, price, description, qty) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [name, price, description, qty]
+    );
   }
 
-  async updateProduct(req: Request, res: Response, productIndex: number) {
-    const data = await this.findAllInDb(req, res);
+  async updateProduct(id: number, product: IProduct) {
+    const { name, price, description, qty } = product;
 
-    data.products[productIndex] = {
-      ...data.products[productIndex],
-      ...req.body,
-    };
+    const productToUpdate = await this.getSingeProductById(id);
 
-    writeFile(this.dbPath, data);
+    return await pool.query(
+      `UPDATE products SET name = $1, price = $2, description = $3, qty = $4 WHERE id = ${id} RETURNING *`,
+      [
+        name || productToUpdate.rows[0].name,
+        price || productToUpdate.rows[0].price,
+        description || productToUpdate.rows[0].description,
+        qty || productToUpdate.rows[0].qty,
+      ]
+    );
   }
 
-  // ** delete a product
-
-  async deleteProduct(req: Request, res: Response, productIndex: number) {
-    const data = await this.findAllInDb(req, res);
-
-    data.products.splice(productIndex, 1);
-
-    writeFile(this.dbPath, data);
+  async deleteProduct(id: number) {
+    return await pool.query(`DELETE FROM products WHERE id = ${id}`);
   }
 }

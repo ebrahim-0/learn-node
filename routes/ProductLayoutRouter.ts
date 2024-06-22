@@ -1,16 +1,14 @@
 import { Router } from "express";
-import ProductService from "./../services/ProductService";
+import ProductService from "../services/ProductService";
 import ProductsViewController from "../controllers/ProductsViewController";
-import path from "path";
 
 const ProductLayoutRouter = Router();
 
-const dbPath = path.join(path.dirname(__dirname), "data", "db.json");
+const productService = new ProductService();
 
-const productService = new ProductService(dbPath);
-const productViewController = new ProductsViewController(productService);
+const productsViewController = new ProductsViewController(productService);
 
-const { renderProductsPage, renderProductPage } = productViewController;
+const { renderProductPage, renderProductsPage } = productsViewController;
 
 ProductLayoutRouter.route("/").get(renderProductsPage);
 

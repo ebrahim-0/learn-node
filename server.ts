@@ -1,18 +1,17 @@
 import express, { Request, Response } from "express";
 import path from "path";
-import ProductLayoutRouter from "./routes/ProductLayoutRouter";
-import productsApiRouter from "./routes/ProductsApiRouter";
+import "dotenv/config";
+
 import { activeRoute } from "./middlewares/activeRoute";
 import ErrorMiddleware from "./middlewares/Error";
 import NotFoundMiddleware from "./middlewares/NotFound";
 import morgan from "morgan";
-import "dotenv/config";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import compression from "compression";
-import pool from "./models/db";
-import productsApiRouterSql from "./routes/productsApiRouterSql";
-import ProductLayoutRouterSql from "./routes/ProductLayoutRouterSql";
+
+import productsApiRouter from "./routes/productsApiRouter";
+import ProductLayoutRouter from "./routes/ProductLayoutRouter";
 
 const app = express();
 
@@ -35,15 +34,6 @@ app.use(limiter);
 
 app.use(
   helmet({
-    // contentSecurityPolicy: {
-    //   directives: {
-    //     "img-src": [
-    //       "'self'",
-    //       "https://picsum.photos",
-    //       "https://fastly.picsum.photos",
-    //     ],
-    //   },
-    // },
     contentSecurityPolicy: false,
     xFrameOptions: {
       action: "deny",
@@ -65,13 +55,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(activeRoute);
 
 // ** Routes
-app.use("/v1/products", ProductLayoutRouter);
 
-app.use("/v1/api/products", productsApiRouter);
+app.use("/products", ProductLayoutRouter);
 
-app.use("/v2/products", ProductLayoutRouterSql);
-
-app.use("/v2/api/products", productsApiRouterSql);
+app.use("/api/products", productsApiRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.render("Pages/index", {

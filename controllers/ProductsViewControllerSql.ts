@@ -1,20 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import ProductService from "../services/ProductService";
+import ProductServiceSql from "../services/ProductServiceSql";
 
-export default class ProductsViewController {
-  constructor(private _productService: ProductService) {
+export default class ProductsViewControllerSql {
+  constructor(private _ProductServiceSql: ProductServiceSql) {
     this.renderProductsPage = this.renderProductsPage.bind(this);
     this.renderProductPage = this.renderProductPage.bind(this);
   }
 
   async renderProductsPage(req: Request, res: Response, next: NextFunction) {
     try {
-      // throw new Error("Test error");
-      const products = await this._productService.getAllProducts(req, res);
+      const products = await this._ProductServiceSql.getAllProducts();
+
       res.render("Pages/products", {
         title: "Products",
-        products,
+        products: products.rows,
         isActiveRoute: res.locals.isActiveRoute,
+        v: "v2",
       });
     } catch (error) {
       next(error);
@@ -29,14 +30,16 @@ export default class ProductsViewController {
         return res.status(404).json({ message: "Invalid ID" });
       }
 
-      const product = await this._productService.getProductById(req, res, id);
+      const product = await this._ProductServiceSql.getSingeProductById(id);
+
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
 
       res.render("Pages/product", {
-        title: "Product - " + product.id,
-        product,
+        title: "Product - " + product.rows[0].id,
+        product: product.rows[0],
+        v: "v2",
         isActiveRoute: res.locals.isActiveRoute,
       });
     } catch (error) {

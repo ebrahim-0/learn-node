@@ -9,9 +9,13 @@ nav.rounded-lg.shadow.m-4.bg-white.border-gray-200(class='dark:bg-gray-900')
         #navbar-default.hidden.w-full(class='md:block md:w-auto')
             ul.font-medium.flex.flex-col.p-4.mt-4.border.border-gray-100.rounded-lg.bg-gray-50(class='md:p-0 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700')
                 li
-                    a.block.py-2.px-3.rounded(href='/products' class=`${isActiveRoute('/products') ? 'bg-blue-700' : 'text-gray-900'} text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products
+                    a.block.py-2.px-3.rounded(href='/v1/products' class=`${isActiveRoute('/v1/products') ? 'bg-blue-700' : 'text-gray-900'} text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products v1
                 li
-                    a.block.py-2.px-3.rounded(href='/api/products' class=`${isActiveRoute('/api/products') ? 'bg-blue-700' : 'text-gray-900'} text-white  hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products Api
+                    a.block.py-2.px-3.rounded(href='/v1/api/products' class=`${isActiveRoute('/v1/api/products') ? 'bg-blue-700' : 'text-gray-900'} text-white  hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products Api v1
+                li
+                    a.block.py-2.px-3.rounded(href='/v2/products' class=`${isActiveRoute('/v2/products') ? 'bg-blue-700' : 'text-gray-900'} text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products v2
+                li
+                    a.block.py-2.px-3.rounded(href='/v2/api/products' class=`${isActiveRoute('/v2/api/products') ? 'bg-blue-700' : 'text-gray-900'} text-white  hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products Api v2
 script.
     document.addEventListener('DOMContentLoaded', function() {
         const navbarToggle = document.querySelector('[data-collapse-toggle]');

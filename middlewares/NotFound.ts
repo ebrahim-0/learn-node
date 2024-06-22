@@ -4,7 +4,7 @@ export default class NotFoundMiddleware {
   static handle(req: Request, res: Response, next: NextFunction) {
     console.log("NotFoundMiddleware");
 
-    if (req.originalUrl.startsWith("/api")) {
+    if (req.originalUrl.includes("/api")) {
       res.status(404).json({
         error: `API ${req.originalUrl} endpoint not found`,
       });

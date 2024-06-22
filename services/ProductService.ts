@@ -18,6 +18,7 @@ export default class ProductService {
 
     const newProduct: IProduct = {
       id: data.products.length + 1,
+      qty: 0,
       ...productBody,
     };
 

@@ -4,7 +4,7 @@ export default class ErrorMiddleware {
   static handle(err: Error, req: Request, res: Response, next: NextFunction) {
     console.log("ErrorMiddleware");
 
-    if (req.originalUrl.startsWith("/api")) {
+    if (req.originalUrl.includes("/api")) {
       res.status(500).json({
         error: "Internal Server Error",
         message: err.message,

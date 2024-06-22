@@ -10,13 +10,15 @@ import "dotenv/config";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import compression from "compression";
+import pool from "./models/db";
+import productsApiRouterSql from "./routes/productsApiRouterSql";
+import ProductLayoutRouterSql from "./routes/ProductLayoutRouterSql";
 
 const app = express();
 
 // ** Middlewares
 
 app.use(morgan("dev"));
-
 app.use(compression());
 
 const limiter = rateLimit({
@@ -63,8 +65,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(activeRoute);
 
 // ** Routes
-app.use("/products", ProductLayoutRouter);
-app.use("/api/products", productsApiRouter);
+app.use("/v1/products", ProductLayoutRouter);
+
+app.use("/v1/api/products", productsApiRouter);
+
+app.use("/v2/products", ProductLayoutRouterSql);
+
+app.use("/v2/api/products", productsApiRouterSql);
 
 app.get("/", (req: Request, res: Response) => {
   res.render("Pages/index", {

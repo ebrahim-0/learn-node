@@ -1,7 +1,14 @@
 import { Router } from "express";
-import { productController } from ".";
+import path from "path";
+import ProductService from "../services/ProductService";
+import ProductsController from "../controllers/ProductsController";
 
 const productsApiRouter = Router();
+
+const dbPath = path.join(path.dirname(__dirname), "data", "db.json");
+
+const productService = new ProductService(dbPath);
+const productController = new ProductsController(productService);
 
 const {
   getAllProducts,

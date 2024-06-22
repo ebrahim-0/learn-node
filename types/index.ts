@@ -8,6 +8,7 @@ export interface IProduct {
   name: string;
   price: number;
   description: string;
+  qty: number;
   image?: string;
 }
 

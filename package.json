@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "nodemon --ignore data/db.json server.ts",
-    "build": "tsc -p . && cp ./public ./dist -r && cp ./views ./dist -r",
+    "dev": "nodemon server.ts",
+    "build": "tsc && cp ./public ./dist -r && cp ./views ./dist -r",
     "build:css": "postcss public/styles/tailwind.css -o public/styles/global.css",
     "watch:css": "postcss public/styles/tailwind.css -o public/styles/global.css --watch"
   },

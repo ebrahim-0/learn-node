@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
-    "build": "tsc && cp ./src/public ./dist -r && cp ./src/views ./dist -r",
+    "build": "tsc -p . && cp ./src/public ./dist -r && cp ./src/views ./dist -r",
     "build:css": "postcss src/public/styles/tailwind.css -o src/public/styles/global.css",
     "watch:css": "postcss src/public/styles/tailwind.css -o src/public/styles/global.css --watch"
   },

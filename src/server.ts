@@ -49,7 +49,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 // ** Static files
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // ** Active Route Middleware
 app.use(activeRoute);

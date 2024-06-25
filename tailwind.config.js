@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./views/**/*.pug", "./public/**/*.css"],
+  darkMode: "class",
+  content: ["./src/views/**/*.pug", "./public/**/*.css"],
   theme: {
     container: {
       center: true,

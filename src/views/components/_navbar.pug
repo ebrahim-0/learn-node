@@ -3,19 +3,17 @@ nav.rounded-lg.shadow.m-4.bg-white.border-gray-200(class='dark:bg-gray-900')
         a.flex.items-center.space-x-3(href='/' class='rtl:space-x-reverse')
             span.self-center.text-2xl.font-semibold.whitespace-nowrap(class=`py-2 px-3 rounded text-white bg-blue-700`) Product Api
         .flex.gap-2
+            button#toggle-dark-mode.order-2.bg-blue-500.text-white.font-bold.py-2.px-4.rounded(class='hover:bg-blue-700' data-toggle="toggle-dark-mode" aria-label='toggle-dark-mode' title='Toggle dark mode')
             button.inline-flex.items-center.p-2.w-10.h-10.justify-center.text-sm.text-gray-500.rounded-lg(data-collapse-toggle='navbar-default' type='button' class='md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600' aria-controls='navbar-default' aria-expanded='false')
                 span.sr-only Open main menu
                 svg.w-5.h-5(aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 17 14')
                     path(stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M1 1h15M1 7h15M1 13h15')
-                .flex
-                    button#toggle-dark-mode.order-2.bg-blue-500.text-white.font-bold.py-2.px-4.rounded(class='hover:bg-blue-700' data-toggle="toggle-dark-mode" aria-label='toggle-dark-mode' title='Toggle dark mode')
-
-                    #navbar-default.order-1.hidden.w-full(class='md:block md:w-auto')
-                        ul.font-medium.flex.flex-col.p-4.mt-4.border.border-gray-100.rounded-lg.bg-gray-50(class='md:p-0 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700')
-                            li
-                                a.block.py-2.px-3.rounded(href='/products' class=`${isActiveRoute('/products') ? 'bg-blue-700' : 'text-gray-900'} text-black dark:text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products
-                            li
-                                a.block.py-2.px-3.rounded(href='/api/products' class=`${isActiveRoute('/api/products') ? 'bg-blue-700' : 'text-gray-900'} text-black dark:text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products Api
+        #navbar-default.order-1.hidden.w-full(class='md:block md:w-auto')
+            ul.font-medium.flex.flex-col.p-4.mt-4.border.border-gray-100.rounded-lg.bg-gray-50(class='md:p-0 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700')
+                li
+                    a.block.py-2.px-3.rounded(href='/products' class=`${isActiveRoute('/products') ? 'bg-blue-700' : 'text-gray-900'} text-black dark:text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products
+                li
+                    a.block.py-2.px-3.rounded(href='/api/products' class=`${isActiveRoute('/api/products') ? 'bg-blue-700' : 'text-gray-900'} text-black dark:text-white hover:bg-gray-100 md:blue-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:blue-700`) Products Api
 script.
     document.addEventListener('DOMContentLoaded', function() {
         const navbarToggle = document.querySelector('[data-collapse-toggle]');

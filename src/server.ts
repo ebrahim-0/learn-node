@@ -12,8 +12,15 @@ import compression from "compression";
 
 import productsApiRouter from "./routes/productsApiRouter";
 import ProductLayoutRouter from "./routes/ProductLayoutRouter";
+import pool from "./models/db";
 
 const app = express();
+
+// ** Database connection
+
+pool.connect().then(() => {
+  console.log("Database connected");
+});
 
 // ** Middlewares
 

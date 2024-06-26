@@ -3,22 +3,44 @@ import { IProduct } from "../types";
 
 export default class ProductService {
   constructor() {
-    console.log("🚀 ProductService");
+    console.log("🚀 ProductService initialized");
   }
 
-  async getAllProducts() {
-    return await pool.query(`SELECT * FROM products`);
+  async getAllProducts(limit: number = 10, offset: number = 0) {
+    return await pool.query(`SELECT * FROM products LIMIT $1 OFFSET $2`, [
+      limit,
+      offset,
+    ]);
   }
 
-  async getProductsByFilter(filteredParams: string) {
-    return await pool.query(`SELECT id, ${filteredParams} FROM products`);
+  async getTotalCount() {
+    const all = await pool.query(`SELECT * FROM PRODUCTS`);
+    return all.rowCount;
   }
 
-  async getProductsByIds(ids: string[]) {
-    return await pool.query("SELECT * FROM products WHERE id = ANY($1)", [ids]);
+  async getProductsByFilter(
+    filter: string,
+    limit: number = 10,
+    offset: number = 0
+  ) {
+    return await pool.query(
+      `SELECT id, ${filter} FROM products LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    );
   }
 
-  async getSingeProductById(id: number) {
+  async getProductsByIds(
+    ids: string[],
+    limit: number = 10,
+    offset: number = 0
+  ) {
+    return await pool.query(
+      "SELECT * FROM products WHERE id = ANY($1) LIMIT $2 OFFSET $3",
+      [ids, limit, offset]
+    );
+  }
+
+  async getSingleProductById(id: number) {
     return await pool.query(`SELECT * FROM products WHERE id = ${id}`);
   }
 
@@ -38,7 +60,7 @@ export default class ProductService {
   async updateProduct(id: number, product: IProduct) {
     const { name, price, description, qty } = product;
 
-    const productToUpdate = await this.getSingeProductById(id);
+    const productToUpdate = await this.getSingleProductById(id);
 
     return await pool.query(
       `UPDATE products SET name = $1, price = $2, description = $3, qty = $4 WHERE id = ${id} RETURNING *`,

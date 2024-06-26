@@ -29,7 +29,7 @@ export default class ProductsViewController {
         return res.status(404).json({ message: "Invalid ID" });
       }
 
-      const product = await this._ProductService.getSingeProductById(id);
+      const product = await this._ProductService.getSingleProductById(id);
 
       if (!product) {
         return res.status(404).json({ message: "Product not found" });

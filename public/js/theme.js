@@ -3,12 +3,6 @@ const isDark = localStorage.getItem("dark-mode") === "true";
 document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggle-dark-mode");
 
-  // Ensure the toggle button exists
-  if (!toggleBtn) {
-    console.error('Toggle button with ID "toggle-dark-mode" not found.');
-    return;
-  }
-
   // Set initial state
   if (isDark) {
     document.documentElement.classList.add("dark");
@@ -17,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.classList.remove("dark");
     setDarkModeIcon(toggleBtn, false);
   }
+
+  if (toggleBtn === null) return console.error("Button not found");
 
   // Add click event listener
   toggleBtn.addEventListener("click", toggleMode);
@@ -34,6 +30,7 @@ function toggleMode() {
 }
 
 function setDarkModeIcon(button, isDark) {
+  if (button === null) return console.error("Button not found");
   if (isDark) {
     button.innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

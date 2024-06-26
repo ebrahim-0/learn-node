@@ -13,7 +13,7 @@ const productsController = new ProductsController(productService);
 const {
   getAllProducts,
   createProduct,
-  getSingeProduct,
+  getSingleProduct,
   updateProduct,
   deleteProduct,
 } = productsController;
@@ -22,7 +22,7 @@ productsApiRouter.route("/").get(getAllProducts).post(createProduct);
 
 productsApiRouter
   .route("/:id")
-  .get(getSingeProduct)
+  .get(getSingleProduct)
   .patch(updateProduct)
   .delete(deleteProduct);
 

@@ -4,62 +4,91 @@ import ProductService from "../services/ProductService";
 export default class ProductsController {
   constructor(private _ProductService: ProductService) {
     this.getAllProducts = this.getAllProducts.bind(this);
-    this.getSingeProduct = this.getSingeProduct.bind(this);
+    this.getSingleProduct = this.getSingleProduct.bind(this);
 
     this.createProduct = this.createProduct.bind(this);
     this.updateProduct = this.updateProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
 
-    console.log("🚀 ProductsController");
+    console.log("🚀 ProductsController initialized");
   }
 
   async getAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
       const ids = req.query.id as string[];
-      const filteredParams = req.query.filter as string;
+      const filter = req.query.filter as string;
 
-      if (ids?.length || filteredParams) {
-        if (filteredParams) {
-          const products = await this._ProductService.getProductsByFilter(
-            filteredParams
-          );
-          res.status(200).json({ products: products.rows });
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const offset = (page - 1) * limit;
+
+      const totalCount = await this._ProductService.getTotalCount();
+
+      if (ids?.length) {
+        const formattedIds = Array.isArray(ids) ? ids : [ids];
+        const products = await this._ProductService.getProductsByIds(
+          formattedIds,
+          limit,
+          offset
+        );
+
+        if (!products.rowCount) {
+          return res.status(404).json({ message: "Product not found" });
         }
-
-        if (ids?.length) {
-          const formattedIds = Array.isArray(ids) ? ids : [ids];
-          console.log("formattedIds", formattedIds);
-          const products = await this._ProductService.getProductsByIds(
-            formattedIds
-          );
-
-          if (!products.rowCount) {
-            return res.status(404).json({ message: "Product not found" });
-          }
-          res.status(200).json({ products: products.rows });
-        }
+        res.status(200).json({
+          products: products.rows,
+          page,
+          limit,
+          offset,
+          totalPages: Math.ceil((totalCount as number) / limit),
+        });
+      } else if (filter) {
+        const products = await this._ProductService.getProductsByFilter(
+          filter,
+          limit,
+          offset
+        );
+        res.status(200).json({
+          products: products.rows,
+          page,
+          limit,
+          offset,
+          totalPages: Math.ceil((totalCount as number) / limit),
+        });
       } else {
-        const products = await this._ProductService.getAllProducts();
-        res.status(200).json({ products: products.rows });
+        const products = await this._ProductService.getAllProducts(
+          limit,
+          offset
+        );
+        res.status(200).json({
+          products: products.rows,
+          page,
+          limit,
+          offset,
+          totalPages: Math.ceil((totalCount as number) / limit),
+        });
       }
     } catch (error) {
       next(error);
     }
   }
 
-  async getSingeProduct(req: Request, res: Response, next: NextFunction) {
+  async getSingleProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const id = +req.params.id;
       if (isNaN(id)) {
         return res.status(404).json({ message: "Invalid ID" });
       }
-      const product = await this._ProductService.getSingeProductById(id);
+      const product = await this._ProductService.getSingleProductById(id);
 
       if (!product.rowCount) {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      res.status(200).json(product.rows);
+      res.status(200).json({
+        product: product.rows,
+        length: product.rowCount,
+      });
     } catch (error) {
       next(error);
     }
@@ -69,7 +98,9 @@ export default class ProductsController {
     try {
       const product = req.body;
       const newProduct = await this._ProductService.createProduct(product);
-      res.status(201).json(newProduct.rows);
+      res.status(201).json({
+        product: newProduct.rows,
+      });
     } catch (error) {
       next(error);
     }
@@ -82,7 +113,7 @@ export default class ProductsController {
         return res.status(404).json({ message: "Invalid ID" });
       }
 
-      const productToUpdate = await this._ProductService.getSingeProductById(
+      const productToUpdate = await this._ProductService.getSingleProductById(
         id
       );
 
@@ -94,7 +125,9 @@ export default class ProductsController {
         id,
         product
       );
-      res.status(200).json(updatedProduct.rows);
+      res.status(200).json({
+        product: updatedProduct.rows,
+      });
     } catch (error) {
       next(error);
     }

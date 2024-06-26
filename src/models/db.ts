@@ -11,14 +11,6 @@ const pool = new Pool({
   },
 });
 
-pool.on("connect", async () => {
-  await pool.query(
-    "SELECT setval('products_id_seq', (SELECT MAX(id) FROM products))"
-  );
-
-  console.log("Connected to the database");
-});
-
 pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);

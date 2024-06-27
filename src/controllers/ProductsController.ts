@@ -35,12 +35,16 @@ export default class ProductsController {
         if (!products.rowCount) {
           return res.status(404).json({ message: "Product not found" });
         }
+
+        const totalPages = Math.ceil((totalCount as number) / limit);
+
         res.status(200).json({
           products: products.rows,
           page,
           limit,
           offset,
-          totalPages: Math.ceil((totalCount as number) / limit),
+          totalPages,
+          hasMore: totalPages > page,
         });
       } else if (filter) {
         const products = await this._ProductService.getProductsByFilter(
@@ -48,24 +52,32 @@ export default class ProductsController {
           limit,
           offset
         );
+
+        const totalPages = Math.ceil((totalCount as number) / limit);
+
         res.status(200).json({
           products: products.rows,
           page,
           limit,
           offset,
-          totalPages: Math.ceil((totalCount as number) / limit),
+          totalPages,
+          hasMore: totalPages > page,
         });
       } else {
         const products = await this._ProductService.getAllProducts(
           limit,
           offset
         );
+
+        const totalPages = Math.ceil((totalCount as number) / limit);
+
         res.status(200).json({
           products: products.rows,
           page,
           limit,
           offset,
-          totalPages: Math.ceil((totalCount as number) / limit),
+          totalPages,
+          hasMore: totalPages > page,
         });
       }
     } catch (error) {

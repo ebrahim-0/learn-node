@@ -24,7 +24,10 @@ pool.connect().then(() => {
 
 // ** Middlewares
 
+// ** Logger
 app.use(morgan("dev"));
+
+// ** Compress all responses
 app.use(compression());
 
 const limiter = rateLimit({
@@ -39,6 +42,7 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
 
+// ** Security headers
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -75,11 +79,10 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// app.get("*", (req: Request, res: Response) => {
-//   res.render("Pages/notFound");
-// });
-
+// ** Not found handler
 app.use(NotFoundMiddleware.handle);
+
+// ** Error handler
 app.use(ErrorMiddleware.handle);
 
 const PORT = process.env.PORT || 5000;

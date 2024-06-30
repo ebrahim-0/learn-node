@@ -1,14 +1,9 @@
 import { Router } from "express";
-import ProductService from "../services/ProductService";
-import ProductsController from "../controllers/ProductsController";
+import { productsController } from ".";
 
 const productsApiRouter = Router();
 
 console.log("🚀 productsApiRouter");
-
-const productService = new ProductService();
-
-const productsController = new ProductsController(productService);
 
 const {
   getAllProducts,

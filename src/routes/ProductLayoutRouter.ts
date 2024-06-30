@@ -1,12 +1,7 @@
 import { Router } from "express";
-import ProductService from "../services/ProductService";
-import ProductsViewController from "../controllers/ProductsViewController";
+import { productsViewController } from ".";
 
 const ProductLayoutRouter = Router();
-
-const productService = new ProductService();
-
-const productsViewController = new ProductsViewController(productService);
 
 const { renderProductPage, renderProductsPage } = productsViewController;
 

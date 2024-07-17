@@ -9,12 +9,12 @@ export const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:5000",
-        description: "Development server",
-      },
-      {
         url: "https://learn-node-tn09.onrender.com",
         description: "Production server",
+      },
+      {
+        url: "http://localhost:5000",
+        description: "Development server",
       },
     ],
     components: {

@@ -12,6 +12,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import compression from "compression";
+import cors from "cors";
 
 import productsApiRouter from "./routes/productsApiRouter";
 import ProductLayoutRouter from "./routes/ProductLayoutRouter";
@@ -33,6 +34,8 @@ pool.connect().then(() => {
 
 // ** Logger
 app.use(morgan("dev"));
+
+app.use(cors())
 
 // ** Compress all responses
 app.use(compression());
